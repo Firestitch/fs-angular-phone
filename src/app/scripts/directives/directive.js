@@ -78,6 +78,8 @@
 	            		value = "";
 	            	}
 
+	            	value = value.toString();
+
 	            	$scope.input = $filter('tel')(value.replace(/[^0-9]/g, ''), false);
 	            }
 
