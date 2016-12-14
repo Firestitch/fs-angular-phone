@@ -34,15 +34,18 @@
 				$scope.change = function(e) {
 
 				    var val = angular.element(input).val(),
-				    	start = input.selectionStart,
-				    	end = input.selectionEnd;
+				    	pos = input.selectionStart;
+
+				    if(val) {
+				    	val = val.toString().replace(/^1/,'');
+				    }
 
 				    update(val);
 
-				    if(val.length>start) {
+				    if(val.length>pos) {
 
 					    $timeout(function () {
-					    	input.setSelectionRange(start, end);
+					    	input.setSelectionRange(pos, pos);
 					    },5);
 					}
 
@@ -75,7 +78,6 @@
 	            }
 
 	            function update(value) {
-
 	            	if(!value) {
 	            		value = "";
 	            	}
