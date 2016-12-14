@@ -1,0 +1,20 @@
+{
+  "name": "fs-angular-phone",
+  "description": "",
+  "main": [
+    "dist/phone.js"
+  ],
+  "dependencies": {
+    "fs-angular-util": "^1.0.0",
+    "fs-angular-validate": "^1.0.0"
+  },
+  "authors": [
+    "Firestitch Inc."
+  ],
+  "license": "MIT",
+  "ignore": [
+    "src",
+    ".gitignore"
+  ],
+  "private": false
+}

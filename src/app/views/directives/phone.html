@@ -1,0 +1,13 @@
+<md-input-container class="fs-phone {{class}}">
+	<label ng-show="label">{{label}}</label>
+	<input 	type="text"
+			ng-model="input"
+			aria-label="Phone"
+			ng-disabled="disabled"
+			ng-keyup="change($event)"
+			ng-keydown="keydown($event)"
+			ng-required="{{required}}"
+			name="{{name}}"
+			custom="validate">
+	<input type="hidden" ng-model="model">
+</md-input-container>

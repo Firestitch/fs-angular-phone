@@ -1,0 +1,19 @@
+{
+  "name": "fs-angular-phone",
+  "namespace": "phone",
+  "port": "5036",
+  "moduleName": "app",
+  "version": "0.0.0",
+  "appPath": "app",
+  "dependencies": {
+    "angular": "1.6.0",
+    "angular-material": "1.1.1",
+    "angular-ui-router": "0.2.15",
+    "fs-angular-validate": "^1.0.0",
+    "fs-angular-util": "^1.0.0",
+    "fs-boilerplate-styles": "latest"
+  },
+  "resolutions": {
+    "angular": "1.6.0"
+  }
+}
