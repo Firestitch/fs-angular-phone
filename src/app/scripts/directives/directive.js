@@ -44,8 +44,8 @@
 				    if(val.length>pos) {
 
 					    $timeout(function () {
-					    	input.setSelectionRange(pos, pos);
-					    },5);
+					    	input.setSelectionRange(pos,pos);
+					    });
 					}
 
 	            	$scope.model = $scope.input.replace(/[^0-9]/g,'');
@@ -58,6 +58,7 @@
 	            					37, //back
 	            					39, //forward
 	            					46, //delete
+	            					9, //tab
 	            					8]; //backspace
 
 	            	if(!e.shiftKey && !e.ctrlKey && codes.indexOf(e.keyCode)<0 && !e.key.match(/[\d\(\)]/)) {
@@ -83,16 +84,18 @@
 
 	            	value = value.toString();
 
-	            	$scope.input = $filter('tel')(value.replace(/[^0-9]/g, ''), false);
+	            	$scope.input = $filter('fsPhone')(value.replace(/[^0-9]/g, ''), false);
 	            }
 
 	            update($scope.model);
             }
         };
     })
-    .filter('tel', function () {
+    .filter('fsPhone', function () {
 	    return function (tel) {
-	        if (!tel) { return ''; }
+	        if (!tel) {
+	        	return '';
+	        }
 
 	        var value = tel.toString().trim().replace(/^\+/, '');
 
