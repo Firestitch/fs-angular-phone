@@ -43,7 +43,7 @@
 
 				    if(val.length>pos) {
 
-					    $timeout(function () {
+					    $timeout(function() {
 					    	input.setSelectionRange(pos,pos);
 					    });
 					}
@@ -58,7 +58,7 @@
 	            					37, //back
 	            					39, //forward
 	            					46, //delete
-	            					9, //tab
+	            					9,  //tab
 	            					8]; //backspace
 
 	            	if(!e.shiftKey && !e.ctrlKey && codes.indexOf(e.keyCode)<0 && !e.key.match(/[\d\(\)]/)) {
@@ -67,6 +67,7 @@
 	            }
 
 	            angular.element(input).data('scope',$scope);
+	            update($scope.model);
 
 	            $scope.validate = function(value) {
 
@@ -84,54 +85,43 @@
 
 	            	value = value.toString();
 
-	            	$scope.input = $filter('fsPhone')(value.replace(/[^0-9]/g, ''), false);
+	            	$scope.input = format(value);
 	            }
 
-	            update($scope.model);
+				function format(value) {
+			        if (!value) {
+			        	return '';
+			        }
+
+			        var value = value.replace(/[^0-9]/g, '');
+
+			        if (value.match(/[^0-9]/)) {
+			            return tel;
+			        }
+
+			        var country, city, number;
+
+			        if(value.length<=3) {
+			            city = value;
+			        } else {
+			        	city = value.slice(0, 3);
+			            number = value.slice(3);
+			        }
+
+			        if(number) {
+			            if(number.length>3){
+			                number = number.slice(0, 3) + '-' + number.slice(3,7);
+			            } else{
+			                number = number;
+			            }
+
+			            return ("(" + city + ") " + number).trim();
+			        } else {
+			            return "(" + city;
+			        }
+			    }
             }
         };
-    })
-    .filter('fsPhone', function () {
-	    return function (tel) {
-	        if (!tel) {
-	        	return '';
-	        }
-
-	        var value = tel.toString().trim().replace(/^\+/, '');
-
-	        if (value.match(/[^0-9]/)) {
-	            return tel;
-	        }
-
-	        var country, city, number;
-
-	        switch (value.length) {
-	            case 1:
-	            case 2:
-	            case 3:
-	                city = value;
-	                break;
-
-	            default:
-	                city = value.slice(0, 3);
-	                number = value.slice(3);
-	        }
-
-	        if(number){
-	            if(number.length>3){
-	                number = number.slice(0, 3) + '-' + number.slice(3,7);
-	            }
-	            else{
-	                number = number;
-	            }
-
-	            return ("(" + city + ") " + number).trim();
-	        }
-	        else{
-	            return "(" + city;
-	        }
-
-	    };
-	});
+    });
 })();
 
