@@ -25,10 +25,12 @@
               required: '=?fsRequired',
               class: '@?fsClass'
             },
+            controller: ['$scope',function($scope) {
+            	$scope.name = 'input_' + fsUtil.guid();
+            }],
             link: function($scope, element, attrs, ctrl) {
 
 	            var input = angular.element(element[0].querySelector('input[type="text"]'))[0];
-	            $scope.name = 'input_' + fsUtil.guid();
 				$scope.input = '';
 
 				$scope.change = function(e) {
