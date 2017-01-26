@@ -22,21 +22,27 @@
               model: '=?fsModel',
               label: '@?fsLabel',
               disabled: '=?fsDisabled',
-              required: '=?fsRequired',
-              class: '@?fsClass'
+              class: '@?fsClass',
+              required: '@?fsRequired'
             },
             controller: ['$scope',function($scope) {
             	$scope.name = 'input_' + fsUtil.guid();
             }],
             link: function($scope, element, attrs, ctrl) {
 
-	            var input = angular.element(element[0].querySelector('input[type="text"]'))[0];
+	            var input = angular.element(element[0].querySelector('input[type="text"]'));
+
+	            if($scope.required) {
+	            	input.attr('required',$scope.required);
+	            	input.data('scope',$scope);
+	            }
+
 				$scope.input = '';
 
 				$scope.change = function(e) {
 
-				    var val = angular.element(input).val(),
-				    	pos = input.selectionStart;
+				    var val = input.val(),
+				    	pos = input[0].selectionStart;
 
 				    if(val) {
 				    	val = val.toString().replace(/^1/,'');
@@ -47,7 +53,7 @@
 				    if(val.length>pos) {
 
 					    $timeout(function() {
-					    	input.setSelectionRange(pos,pos);
+					    	input[0].setSelectionRange(pos,pos);
 					    });
 					}
 
@@ -69,7 +75,7 @@
 	            	}
 	            }
 
-	            angular.element(input).data('scope',$scope);
+	            input.data('scope',$scope);
 	            update($scope.model);
 
 	            $scope.validate = function(value) {
@@ -147,8 +153,6 @@ angular.module('fs-angular-phone').run(['$templateCache', function($templateCach
     "\t\t\tng-keyup=\"change($event)\"\r" +
     "\n" +
     "\t\t\tng-keydown=\"keydown($event)\"\r" +
-    "\n" +
-    "\t\t\tng-required=\"required\"\r" +
     "\n" +
     "\t\t\tname=\"{{name}}\"\r" +
     "\n" +
