@@ -128,8 +128,6 @@
     });
 })();
 
-
-
 angular.module('fs-angular-phone').run(['$templateCache', function($templateCache) {
   'use strict';
 
@@ -150,7 +148,7 @@ angular.module('fs-angular-phone').run(['$templateCache', function($templateCach
     "\n" +
     "\t\t\tng-keydown=\"keydown($event)\"\r" +
     "\n" +
-    "\t\t\tng-required=\"{{required}}\"\r" +
+    "\t\t\tng-required=\"required\"\r" +
     "\n" +
     "\t\t\tname=\"{{name}}\"\r" +
     "\n" +
