@@ -1,3 +1,4 @@
+
 (function () {
     'use strict';
 
@@ -31,14 +32,15 @@
 
 	            var input = angular.element(element[0].querySelector('input[type="text"]'));
 
+	            //HACK to populate required attribute for an input. If populated in the template a template compile error is thrown
 	            if($scope.required) {
-	            	input.attr('required',$scope.required);
-	            	input.data('scope',$scope);
+	            	//HACK angular.element(input).attr('required','something-else') will produce required="required"
+	            	input[0].setAttribute('required',$scope.required);
 	            }
 
 				$scope.input = '';
 
-				$scope.change = function(e) {
+				input.on('change',function(e) {
 
 				    var val = input.val(),
 				    	pos = input[0].selectionStart;
@@ -57,9 +59,9 @@
 					}
 
 	            	$scope.model = $scope.input.replace(/[^0-9]/g,'');
-	            }
+	            });
 
-	            $scope.keydown = function(e) {
+	            input.on('keydown',function(e) {
 
 	            	var codes = [	35, //end
 	            					36, //home
@@ -72,12 +74,12 @@
 	            	if(!e.shiftKey && !e.ctrlKey && codes.indexOf(e.keyCode)<0 && !e.key.match(/[\d\(\)]/)) {
 	            		e.preventDefault();
 	            	}
-	            }
+	            });
 
-	            input.data('scope',$scope);
 	            update($scope.model);
 
-	            $scope.validate = function(value) {
+	            //HACK In order to run this validation it has to be placed in a scope that fs-validate can see
+	            $scope.$parent.fsPhoneCustom = function(value) {
 
 	            	if(!fsValidate.phone(value)) {
 	            		return 'Invalid phone number';
@@ -94,6 +96,7 @@
 	            	value = value.toString();
 
 	            	$scope.input = format(value);
+	            	input.val($scope.input);
 	            }
 
 				function format(value) {

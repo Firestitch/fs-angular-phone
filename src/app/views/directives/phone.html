@@ -4,9 +4,7 @@
 			ng-model="input"
 			aria-label="Phone"
 			ng-disabled="disabled"
-			ng-keyup="change($event)"
-			ng-keydown="keydown($event)"
 			name="{{name}}"
-			custom="validate">
+			custom="fsPhoneCustom">
 	<input type="hidden" ng-model="model">
 </md-input-container>
