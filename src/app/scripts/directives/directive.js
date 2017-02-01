@@ -31,12 +31,7 @@
             link: function($scope, element, attrs, ctrl) {
 
 	            var input = angular.element(element[0].querySelector('input[type="text"]'));
-
-	            //HACK to populate required attribute for an input. If populated in the template a template compile error is thrown
-	            if($scope.required) {
-	            	//HACK angular.element(input).attr('required','something-else') will produce required="required"
-	            	input[0].setAttribute('required',$scope.required);
-	            }
+				input.data('custom-scope',$scope);
 
 				$scope.input = '';
 
@@ -79,7 +74,7 @@
 	            update($scope.model);
 
 	            //HACK In order to run this validation it has to be placed in a scope that fs-validate can see
-	            $scope.$parent.fsPhoneCustom = function(value) {
+	            $scope.fsPhoneCustom = function(value) {
 
 	            	if(!fsValidate.phone(value)) {
 	            		return 'Invalid phone number';
