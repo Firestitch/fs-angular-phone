@@ -13,66 +13,65 @@
 	 * @param {expression} fsDisabled An expression to enable/disable the input
 	 * @param {expression} fsRequired An expression to require the input for valiation
 	 */
-    angular.module('fs-angular-phone',['fs-angular-util','fs-angular-validate'])
-    .directive('fsPhone', function($filter, fsUtil, fsValidate, $timeout) {
+    angular.module('fs-angular-phone',['fs-angular-util','fs-angular-validate','fs-angular-model'])
+  .directive('fsPhone', function($filter, fsUtil, fsValidate, $timeout) {
         return {
             templateUrl: 'views/directives/phone.html',
             restrict: 'E',
             replace: true,
             scope: {
-              model: '=?fsModel',
-              label: '@?fsLabel',
-              disabled: '=?fsDisabled',
-              class: '@?fsClass',
-              required: '@?fsRequired'
+            	model: '=fsModel',
+            	label: '@?fsLabel',
+             	disabled: '=?fsDisabled',
+              	class: '@?fsClass',
+              	required: '@?fsRequired'
             },
-            controller: ['$scope',function($scope) {
+            link: function($scope) {
             	$scope.name = 'input_' + fsUtil.guid();
-            }],
-            link: function($scope, element, attrs, ctrl) {
+            }
+        }
+    })
+    .directive('fsPhoneInput', function($filter, fsValidate, $timeout, fsUtil) {
+        return {
+            restrict: 'A',
+            require: '^ngModel',
+            link: function($scope, element, attrs, modelCtrl) {
 
-	            var input = angular.element(element[0].querySelector('input[type="text"]'));
-				input.data('custom-scope',$scope);
+	            var listener = function() {
+	                var value = element.val().replace(/[^0-9]/g, '');
+	                element.val(format(value));
+	            }
 
-				$scope.input = '';
-
-				input.on('change',function(e) {
-
-				    var val = input.val(),
-				    	pos = input[0].selectionStart;
-
-				    if(val) {
-				    	val = val.toString().replace(/^1/,'');
-				    }
-
-				    update(val);
-
-				    if(val.length>pos) {
-
-					    $timeout(function() {
-					    	input[0].setSelectionRange(pos,pos);
-					    });
-					}
-
-	            	$scope.model = $scope.input.replace(/[^0-9]/g,'');
+	            modelCtrl.$parsers.push(function(viewValue) {
+	                return viewValue.replace(/[^0-9]/g, '').slice(0,10);
 	            });
 
-	            input.on('keydown',function(e) {
+	            modelCtrl.$render = function() {
+	            	element.val(format(modelCtrl.$viewValue));
+	            }
 
-	            	var codes = [	35, //end
-	            					36, //home
-	            					37, //back
-	            					39, //forward
-	            					46, //delete
-	            					9,  //tab
-	            					8]; //backspace
+	            element.bind('keydown', function(event) {
 
-	            	if(!e.shiftKey && !e.ctrlKey && codes.indexOf(e.keyCode)<0 && !e.key.match(/[\d\(\)]/)) {
-	            		e.preventDefault();
-	            	}
+					var key = event.keyCode;
+					// If the keys include the CTRL, BACKSPACE, TAB, SHIFT, ALT, or META keys, or the arrow keys, do nothing.
+	                if (key == fsUtil.KEY_DELETE || key == fsUtil.KEY_BACKSPACE || key == fsUtil.KEY_TAB || (15 < key && key < 19) || (37 <= key && key <= 40)){
+	                    return;
+	                }
+
+	                var value = element.val().toString();
+	            	if(event.key.match(/[^0-9]/))
+	            		return event.preventDefault();
+
+	            	if((event.target.selectionStart==event.target.selectionEnd) && value.replace(/[^0-9]/g, '').length>=10)
+	            		return event.preventDefault();
+
+
+	                listener();
 	            });
 
-	            update($scope.model);
+	            element.bind('change paste cut', function() {
+	            	listener(listener);
+	            });
 
 	            //HACK In order to run this validation it has to be placed in a scope that fs-validate can see
 	            $scope.fsPhoneCustom = function(value) {
@@ -84,23 +83,13 @@
 	            	return true;
 	            }
 
-	            function update(value) {
-	            	if(!value) {
-	            		value = "";
-	            	}
+	            function format(tel) {
 
-	            	value = value.toString();
-
-	            	$scope.input = format(value);
-	            	input.val($scope.input);
-	            }
-
-				function format(value) {
-			        if (!value) {
+			        if (!tel) {
 			        	return '';
 			        }
 
-			        var value = value.replace(/[^0-9]/g, '');
+			        var value = tel.toString().trim().replace(/^\+/, '');
 
 			        if (value.match(/[^0-9]/)) {
 			            return tel;
@@ -108,25 +97,33 @@
 
 			        var country, city, number;
 
-			        if(value.length<=3) {
-			            city = value;
-			        } else {
-			        	city = value.slice(0, 3);
-			            number = value.slice(3);
+			        switch (value.length) {
+			            case 1:
+			            case 2:
+			            case 3:
+			                city = value;
+			                break;
+
+			            default:
+			                city = value.slice(0, 3);
+			                number = value.slice(3);
 			        }
 
-			        if(number) {
+			        if(number){
 			            if(number.length>3){
 			                number = number.slice(0, 3) + '-' + number.slice(3,7);
-			            } else{
+			            }
+			            else{
 			                number = number;
 			            }
 
 			            return ("(" + city + ") " + number).trim();
-			        } else {
+			        }
+			        else{
 			            return "(" + city;
 			        }
-			    }
+	            }
+
             }
         };
     });
@@ -142,7 +139,7 @@ angular.module('fs-angular-phone').run(['$templateCache', function($templateCach
     "\n" +
     "\t<input \ttype=\"text\"\r" +
     "\n" +
-    "\t\t\tng-model=\"input\"\r" +
+    "\t\t\tng-model=\"model\"\r" +
     "\n" +
     "\t\t\taria-label=\"Phone\"\r" +
     "\n" +
@@ -152,9 +149,9 @@ angular.module('fs-angular-phone').run(['$templateCache', function($templateCach
     "\n" +
     "\t\t\trequired-condition=\"{{required}}\"\r" +
     "\n" +
-    "\t\t\tcustom=\"fsPhoneCustom\">\r" +
+    "\t\t\tcustom=\"fsPhoneCustom\"\r" +
     "\n" +
-    "\t<input type=\"hidden\" ng-model=\"model\">\r" +
+    "\t\t\tfs-phone-input>\r" +
     "\n" +
     "</md-input-container>"
   );

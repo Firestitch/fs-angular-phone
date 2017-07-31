@@ -1,11 +1,11 @@
 <md-input-container class="fs-phone {{class}}">
 	<label ng-show="label">{{label}}</label>
 	<input 	type="text"
-			ng-model="input"
+			ng-model="model"
 			aria-label="Phone"
 			ng-disabled="disabled"
 			name="{{name}}"
 			required-condition="{{required}}"
-			custom="fsPhoneCustom">
-	<input type="hidden" ng-model="model">
+			custom="fsPhoneCustom"
+			fs-phone-input>
 </md-input-container>
