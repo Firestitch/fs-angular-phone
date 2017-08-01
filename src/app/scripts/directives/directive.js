@@ -25,8 +25,17 @@
               	class: '@?fsClass',
               	required: '@?fsRequired'
             },
-            link: function($scope) {
+            controller: function($scope) {
             	$scope.name = 'input_' + fsUtil.guid();
+
+	            $scope.validatePhone = function(value) {
+
+	            	if(!fsValidate.phone(value)) {
+	            		return 'Invalid phone number';
+	            	}
+
+	            	return true;
+	            }
             }
         }
     })
@@ -71,16 +80,6 @@
 	            element.bind('change paste cut', function() {
 	            	listener(listener);
 	            });
-
-	            //HACK In order to run this validation it has to be placed in a scope that fs-validate can see
-	            $scope.fsPhoneCustom = function(value) {
-
-	            	if(!fsValidate.phone(value)) {
-	            		return 'Invalid phone number';
-	            	}
-
-	            	return true;
-	            }
 
 	            function format(tel) {
 
